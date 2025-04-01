@@ -8,4 +8,5 @@ export interface EmailTemplateProps {
   subtitle: string;
   showCta: boolean;
   ctaText: string;
+  templateStyle?: string;
 }

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PlusCircle, Search, Send } from "lucide-react";
 import { toast } from "sonner";
+import CampaignComposer from "@/components/emails/CampaignComposer";
 
 const SAMPLE_SUBSCRIBERS = [
   { id: 1, email: "john.doe@example.com", name: "John Doe", date: "2023-10-15", status: "Active" },
@@ -17,7 +18,8 @@ const SAMPLE_SUBSCRIBERS = [
 ];
 
 const EmailListsPage = () => {
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isComposerOpen, setIsComposerOpen] = useState(false);
   
   const filteredSubscribers = SAMPLE_SUBSCRIBERS.filter(
     (subscriber) =>
@@ -26,7 +28,7 @@ const EmailListsPage = () => {
   );
 
   const handleSendCampaign = () => {
-    toast.info("Opening campaign composer");
+    setIsComposerOpen(true);
   };
 
   const handleImportSubscribers = () => {
@@ -120,6 +122,12 @@ const EmailListsPage = () => {
           </div>
         </CardContent>
       </Card>
+      
+      <CampaignComposer 
+        open={isComposerOpen} 
+        onOpenChange={setIsComposerOpen} 
+        subscribers={SAMPLE_SUBSCRIBERS}
+      />
     </DashboardLayout>
   );
 };
