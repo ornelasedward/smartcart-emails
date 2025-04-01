@@ -9,6 +9,7 @@ import { CampaignComposerProps } from "./types/CampaignComposerTypes";
 import CampaignTabContainer from "./campaign/CampaignTabContainer";
 import SchedulingOptions from "./campaign/SchedulingOptions";
 import { sendCampaignNow, scheduleCampaign } from "@/services/emailCampaignService";
+import { EmailTemplateStyle } from "./editor/EmailTemplateStyles";
 
 const CampaignComposer: React.FC<CampaignComposerProps> = ({
   open,
@@ -26,7 +27,7 @@ const CampaignComposer: React.FC<CampaignComposerProps> = ({
     subtitle: getDefaultSubtitle("confirmation"),
     showCta: false,
     ctaText: "Shop Now",
-    templateStyle: "modern" as const,
+    templateStyle: "modern" as EmailTemplateStyle,
     isScheduled: false,
     scheduleDate: undefined as Date | undefined
   });

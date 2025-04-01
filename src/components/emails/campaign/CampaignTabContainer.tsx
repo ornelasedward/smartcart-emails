@@ -4,7 +4,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import ContentTab from "../editor/ContentTab";
 import DesignTab from "../editor/DesignTab";
 import PreviewTab from "../editor/PreviewTab";
-import EmailTemplateStyles from "../editor/EmailTemplateStyles";
+import EmailTemplateStyles, { EmailTemplateStyle } from "../editor/EmailTemplateStyles";
 import { TabBaseProps } from "../types/CampaignComposerTypes";
 
 interface CampaignTabContainerProps extends TabBaseProps {
@@ -65,7 +65,7 @@ const CampaignTabContainer: React.FC<CampaignTabContainerProps> = ({
     setCampaignData(prev => ({ ...prev, logoUrl: value }));
   };
 
-  const setTemplateStyle = (value: any) => {
+  const setTemplateStyle = (value: EmailTemplateStyle) => {
     setCampaignData(prev => ({ ...prev, templateStyle: value }));
   };
 
