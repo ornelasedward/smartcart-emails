@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -38,10 +37,9 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
   const [subtitle, setSubtitle] = useState("");
   const [showCta, setShowCta] = useState(false);
   const [ctaText, setCtaText] = useState("Shop Now");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [productImageUrl, setProductImageUrl] = useState("");
   const [productTitle, setProductTitle] = useState("");
-  
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const productImageInputRef = useRef<HTMLInputElement>(null);
   
   const getDefaultSubject = () => {
@@ -112,7 +110,6 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
       setSubtitle(getDefaultSubtitle());
       setShowCta(templateType === "abandoned-cart");
       setCtaText(templateType === "abandoned-cart" ? "Complete Your Order" : "Shop Now");
-      setProductTitle(templateType === "abandoned-cart" ? "Your Cart Item" : "Featured Product");
     }
   }, [open, templateType]);
 
@@ -168,24 +165,9 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
     }
   };
 
-  const handleProductImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const localUrl = URL.createObjectURL(file);
-      setProductImageUrl(localUrl);
-      toast.success("Product image uploaded successfully");
-    }
-  };
-
   const triggerFileInput = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
-    }
-  };
-
-  const triggerProductImageInput = () => {
-    if (productImageInputRef.current) {
-      productImageInputRef.current.click();
     }
   };
 
@@ -193,7 +175,7 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
     e.preventDefault();
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>, type: 'logo' | 'product') => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, type: 'logo') => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
@@ -202,9 +184,6 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
       if (type === 'logo') {
         setLogoUrl(localUrl);
         toast.success("Logo uploaded successfully");
-      } else {
-        setProductImageUrl(localUrl);
-        toast.success("Product image uploaded successfully");
       }
     } else {
       toast.error("Please upload an image file");
@@ -230,20 +209,13 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
           ${subtitle ? `<p style="margin-top: 10px; font-size: 16px; color: white;">${subtitle}</p>` : ''}
         </div>
         
-        <div style="padding: 30px 20px; background-color: white;">
+        <div style="padding: 30px 20px; background-color: white; text-align: center;">
           <p style="line-height: 1.6; font-size: 16px; margin-bottom: 20px;">Hello John,</p>
           <p style="line-height: 1.6; font-size: 16px;">${processedContent}</p>
           
-          ${productImageUrl ? `
-            <div style="text-align: center; margin: 30px 0; padding: 15px; background-color: #f8f8f8;">
-              <img src="${productImageUrl}" alt="Product" style="max-width: 200px; max-height: 200px;" />
-              <p style="font-weight: bold; margin-top: 10px;">${productTitle || "Product Name"}</p>
-            </div>
-          ` : ''}
-          
           ${showCta ? `
             <div style="text-align: center; margin: 30px 0;">
-              <a href="#" style="background-color: #000000; color: white; padding: 12px 25px; text-decoration: none; font-weight: bold; display: inline-block;">${ctaText}</a>
+              <a href="#" style="background-color: ${primaryColor}; color: white; padding: 12px 25px; text-decoration: none; font-weight: bold; display: inline-block;">${ctaText}</a>
             </div>
           ` : ''}
           
@@ -356,16 +328,6 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
                 </div>
               )}
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="productTitle">Product Title</Label>
-              <Input 
-                id="productTitle" 
-                value={productTitle} 
-                onChange={(e) => setProductTitle(e.target.value)} 
-                placeholder="Enter product title" 
-              />
-            </div>
           </TabsContent>
           
           <TabsContent value="design" className="space-y-6 py-4">
@@ -427,7 +389,7 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
             </div>
             
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Images</h3>
+              <h3 className="text-lg font-medium">Logo</h3>
               
               <div className="space-y-2">
                 <Label>Company Logo</Label>
@@ -458,43 +420,6 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
                     <>
                       <div className="mb-2 p-2 rounded-full bg-muted">
                         <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-1">Click to upload or drag and drop</p>
-                      <p className="text-xs text-muted-foreground">PNG, JPG or SVG (max 2MB)</p>
-                    </>
-                  )}
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label>Product Image</Label>
-                <input 
-                  type="file" 
-                  ref={productImageInputRef} 
-                  accept="image/*" 
-                  className="hidden" 
-                  onChange={handleProductImageUpload} 
-                />
-                <div 
-                  className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
-                  onClick={triggerProductImageInput}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, 'product')}
-                >
-                  {productImageUrl ? (
-                    <div className="flex flex-col items-center">
-                      <img src={productImageUrl} alt="Product image preview" className="max-h-40 mb-2" />
-                      <Button variant="outline" size="sm" onClick={(e) => {
-                        e.stopPropagation();
-                        setProductImageUrl("");
-                      }}>
-                        Remove Image
-                      </Button>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="mb-2 p-2 rounded-full bg-muted">
-                        <PlusCircle className="h-6 w-6 text-muted-foreground" />
                       </div>
                       <p className="text-sm text-muted-foreground mb-1">Click to upload or drag and drop</p>
                       <p className="text-xs text-muted-foreground">PNG, JPG or SVG (max 2MB)</p>
