@@ -2,50 +2,46 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { CalendarIcon, Send } from "lucide-react";
-import ContentTab from "./editor/ContentTab";
-import DesignTab from "./editor/DesignTab";
-import PreviewTab from "./editor/PreviewTab";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Send } from "lucide-react";
 import { getDefaultContent, getDefaultHeroTitle, getDefaultSubtitle } from "./editor/EmailEditorUtils";
-import EmailTemplateStyles, { EmailTemplateStyle } from "./editor/EmailTemplateStyles";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-
-interface CampaignComposerProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  subscribers: { id: number; email: string; name: string; date?: string; status?: string; };
-}
+import { CampaignComposerProps } from "./types/CampaignComposerTypes";
+import CampaignTabContainer from "./campaign/CampaignTabContainer";
+import SchedulingOptions from "./campaign/SchedulingOptions";
 
 const CampaignComposer: React.FC<CampaignComposerProps> = ({
   open,
   onOpenChange,
   subscribers
 }) => {
-  const [subject, setSubject] = useState("");
-  const [content, setContent] = useState(getDefaultContent("confirmation"));
-  const [logoUrl, setLogoUrl] = useState("");
-  const [primaryColor, setPrimaryColor] = useState("#4f46e5");
-  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [activeColorType, setActiveColorType] = useState<"primary" | "background">("primary");
   const [activeTab, setActiveTab] = useState("content");
-  const [heroTitle, setHeroTitle] = useState(getDefaultHeroTitle("confirmation"));
-  const [subtitle, setSubtitle] = useState(getDefaultSubtitle("confirmation"));
-  const [showCta, setShowCta] = useState(false);
-  const [ctaText, setCtaText] = useState("Shop Now");
-  const [templateStyle, setTemplateStyle] = useState<EmailTemplateStyle>("modern");
-  const [isScheduled, setIsScheduled] = useState(false);
-  const [scheduleDate, setScheduleDate] = useState<Date | undefined>(undefined);
+  const [campaignData, setCampaignData] = useState({
+    subject: "",
+    content: getDefaultContent("confirmation"),
+    logoUrl: "",
+    primaryColor: "#4f46e5",
+    backgroundColor: "#ffffff",
+    heroTitle: getDefaultHeroTitle("confirmation"),
+    subtitle: getDefaultSubtitle("confirmation"),
+    showCta: false,
+    ctaText: "Shop Now",
+    templateStyle: "modern",
+    isScheduled: false,
+    scheduleDate: undefined as Date | undefined
+  });
+  
+  const { isScheduled, scheduleDate } = campaignData;
+
+  const setIsScheduled = (value: boolean) => {
+    setCampaignData(prev => ({ ...prev, isScheduled: value }));
+  };
+
+  const setScheduleDate = (date: Date | undefined) => {
+    setCampaignData(prev => ({ ...prev, scheduleDate: date }));
+  };
 
   const handleSendNow = () => {
-    if (!subject.trim()) {
+    if (!campaignData.subject.trim()) {
       toast.error("Please provide a subject for your email");
       return;
     }
@@ -55,16 +51,14 @@ const CampaignComposer: React.FC<CampaignComposerProps> = ({
     toast.success("Campaign sent successfully!");
     console.log("Sending campaign to:", recipients);
     console.log("Email data:", { 
-      subject, content, heroTitle, subtitle, 
-      templateStyle, primaryColor, backgroundColor,
-      logoUrl, showCta, ctaText 
+      ...campaignData 
     });
     
     onOpenChange(false);
   };
 
   const handleSchedule = () => {
-    if (!subject.trim()) {
+    if (!campaignData.subject.trim()) {
       toast.error("Please provide a subject for your email");
       return;
     }
@@ -81,9 +75,7 @@ const CampaignComposer: React.FC<CampaignComposerProps> = ({
     console.log("Scheduling campaign for:", scheduledTime);
     console.log("Recipients:", recipients);
     console.log("Email data:", { 
-      subject, content, heroTitle, subtitle, 
-      templateStyle, primaryColor, backgroundColor,
-      logoUrl, showCta, ctaText 
+      ...campaignData
     });
     
     onOpenChange(false);
@@ -109,93 +101,19 @@ const CampaignComposer: React.FC<CampaignComposerProps> = ({
             <TabsTrigger value="preview">Preview</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="content">
-            <ContentTab
-              subject={subject}
-              setSubject={setSubject}
-              heroTitle={heroTitle}
-              setHeroTitle={setHeroTitle}
-              subtitle={subtitle}
-              setSubtitle={setSubtitle}
-              content={content}
-              setContent={setContent}
-              showCta={showCta}
-              setShowCta={setShowCta}
-              ctaText={ctaText}
-              setCtaText={setCtaText}
-            />
-          </TabsContent>
-          
-          <TabsContent value="design">
-            <DesignTab
-              primaryColor={primaryColor}
-              setPrimaryColor={setPrimaryColor}
-              backgroundColor={backgroundColor}
-              setBackgroundColor={setBackgroundColor}
-              showColorPicker={showColorPicker}
-              setShowColorPicker={setShowColorPicker}
-              activeColorType={activeColorType}
-              setActiveColorType={setActiveColorType}
-              logoUrl={logoUrl}
-              setLogoUrl={setLogoUrl}
-            />
-          </TabsContent>
-          
-          <TabsContent value="style">
-            <div className="py-4">
-              <EmailTemplateStyles
-                selectedStyle={templateStyle}
-                onSelectStyle={setTemplateStyle}
-              />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="preview">
-            <PreviewTab
-              content={content}
-              logoUrl={logoUrl}
-              primaryColor={primaryColor}
-              backgroundColor={backgroundColor}
-              heroTitle={heroTitle}
-              subtitle={subtitle}
-              showCta={showCta}
-              ctaText={ctaText}
-              templateStyle={templateStyle}
-            />
-          </TabsContent>
+          <CampaignTabContainer
+            campaignData={campaignData}
+            setCampaignData={setCampaignData}
+            activeTab={activeTab}
+          />
         </Tabs>
         
-        <div className="flex items-center space-x-2 py-2">
-          <Switch 
-            id="schedule" 
-            checked={isScheduled}
-            onCheckedChange={setIsScheduled}
-          />
-          <Label htmlFor="schedule">Schedule for later</Label>
-          
-          {isScheduled && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="w-auto ml-4 flex items-center gap-2"
-                >
-                  <CalendarIcon className="h-4 w-4" />
-                  {scheduleDate ? format(scheduleDate, "PPP") : "Select date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={scheduleDate}
-                  onSelect={setScheduleDate}
-                  initialFocus
-                  disabled={(date) => date < new Date()}
-                />
-              </PopoverContent>
-            </Popover>
-          )}
-        </div>
+        <SchedulingOptions
+          isScheduled={isScheduled}
+          setIsScheduled={setIsScheduled}
+          scheduleDate={scheduleDate}
+          setScheduleDate={setScheduleDate}
+        />
         
         <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
@@ -216,5 +134,8 @@ const CampaignComposer: React.FC<CampaignComposerProps> = ({
     </Dialog>
   );
 };
+
+// Add missing import
+import { format } from "date-fns";
 
 export default CampaignComposer;

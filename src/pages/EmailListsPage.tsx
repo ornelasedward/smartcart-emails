@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,8 +8,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { PlusCircle, Search, Send } from "lucide-react";
 import { toast } from "sonner";
 import CampaignComposer from "@/components/emails/CampaignComposer";
+import { SubscriberType } from "@/components/emails/editor/templates/EmailTemplateProps";
 
-const SAMPLE_SUBSCRIBERS = [
+const SAMPLE_SUBSCRIBERS: SubscriberType[] = [
   { id: 1, email: "john.doe@example.com", name: "John Doe", date: "2023-10-15", status: "Active" },
   { id: 2, email: "jane.smith@example.com", name: "Jane Smith", date: "2023-10-14", status: "Active" },
   { id: 3, email: "mike.johnson@example.com", name: "Mike Johnson", date: "2023-10-12", status: "Active" },
