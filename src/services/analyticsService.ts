@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
 export interface EmailStats {
   sent: number;
@@ -31,25 +32,30 @@ export interface TimeSeriesData {
 // This would normally get real data from the database
 export const getEmailStats = async (): Promise<EmailStats> => {
   try {
+    // Fetch analytics data from Supabase with proper type casting
     const { data: sent, error: sentError } = await supabase
       .from('email_analytics')
-      .select('count')
-      .eq('event_type', 'sent');
+      .select('id')
+      .eq('event_type', 'sent')
+      .count();
       
     const { data: opened, error: openedError } = await supabase
       .from('email_analytics')
-      .select('count')
-      .eq('event_type', 'opened');
+      .select('id')
+      .eq('event_type', 'opened')
+      .count();
       
     const { data: clicked, error: clickedError } = await supabase
       .from('email_analytics')
-      .select('count')
-      .eq('event_type', 'clicked');
+      .select('id')
+      .eq('event_type', 'clicked')
+      .count();
       
     const { data: bounced, error: bouncedError } = await supabase
       .from('email_analytics')
-      .select('count')
-      .eq('event_type', 'bounced');
+      .select('id')
+      .eq('event_type', 'bounced')
+      .count();
     
     if (sentError || openedError || clickedError || bouncedError) {
       console.error("Error fetching email stats:", sentError || openedError || clickedError || bouncedError);
@@ -57,7 +63,7 @@ export const getEmailStats = async (): Promise<EmailStats> => {
     }
     
     // For demo purposes, if we don't have data, return some sample data
-    if (!sent?.length) {
+    if (!sent) {
       return {
         sent: 1245,
         opened: 876,
@@ -66,6 +72,7 @@ export const getEmailStats = async (): Promise<EmailStats> => {
       };
     }
     
+    // Parse the count results from Supabase
     return {
       sent: sent[0]?.count || 0,
       opened: opened[0]?.count || 0,
