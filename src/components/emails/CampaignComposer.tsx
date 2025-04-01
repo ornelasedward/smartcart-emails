@@ -1,13 +1,14 @@
+
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Send } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getDefaultContent, getDefaultHeroTitle, getDefaultSubtitle } from "./editor/EmailEditorUtils";
 import { CampaignComposerProps } from "./types/CampaignComposerTypes";
 import CampaignTabContainer from "./campaign/CampaignTabContainer";
 import SchedulingOptions from "./campaign/SchedulingOptions";
+import { sendCampaignNow, scheduleCampaign } from "@/services/emailCampaignService";
 
 const CampaignComposer: React.FC<CampaignComposerProps> = ({
   open,
@@ -25,7 +26,7 @@ const CampaignComposer: React.FC<CampaignComposerProps> = ({
     subtitle: getDefaultSubtitle("confirmation"),
     showCta: false,
     ctaText: "Shop Now",
-    templateStyle: "modern",
+    templateStyle: "modern" as const,
     isScheduled: false,
     scheduleDate: undefined as Date | undefined
   });
@@ -41,44 +42,17 @@ const CampaignComposer: React.FC<CampaignComposerProps> = ({
   };
 
   const handleSendNow = () => {
-    if (!campaignData.subject.trim()) {
-      toast.error("Please provide a subject for your email");
-      return;
+    const success = sendCampaignNow(campaignData, subscribers);
+    if (success) {
+      onOpenChange(false);
     }
-
-    const recipients = subscribers.map(sub => sub.email).join(", ");
-    
-    toast.success("Campaign sent successfully!");
-    console.log("Sending campaign to:", recipients);
-    console.log("Email data:", { 
-      ...campaignData 
-    });
-    
-    onOpenChange(false);
   };
 
   const handleSchedule = () => {
-    if (!campaignData.subject.trim()) {
-      toast.error("Please provide a subject for your email");
-      return;
+    const success = scheduleCampaign(campaignData, subscribers);
+    if (success) {
+      onOpenChange(false);
     }
-
-    if (!scheduleDate) {
-      toast.error("Please select a date to schedule your campaign");
-      return;
-    }
-
-    const recipients = subscribers.map(sub => sub.email).join(", ");
-    const scheduledTime = format(scheduleDate, "PPP 'at' p");
-    
-    toast.success(`Campaign scheduled for ${scheduledTime}`);
-    console.log("Scheduling campaign for:", scheduledTime);
-    console.log("Recipients:", recipients);
-    console.log("Email data:", { 
-      ...campaignData
-    });
-    
-    onOpenChange(false);
   };
 
   const recipientCount = subscribers.filter(s => s.status !== "Inactive").length;
@@ -134,8 +108,5 @@ const CampaignComposer: React.FC<CampaignComposerProps> = ({
     </Dialog>
   );
 };
-
-// Add missing import
-import { format } from "date-fns";
 
 export default CampaignComposer;
