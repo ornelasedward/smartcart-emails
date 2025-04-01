@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 export interface EmailStats {
@@ -17,6 +18,29 @@ export interface DailyStats {
   sent: number;
   opened: number;
   clicked: number;
+}
+
+// Interface for chart data items
+export interface ChartDataItem {
+  name: string;
+  value: number;
+}
+
+// Interface for time series data
+export interface TimeSeriesData {
+  date: string;
+  sent: number;
+  opened: number;
+  clicked: number;
+  bounced: number;
+}
+
+// Interface for conversion stats
+export interface ConversionStats {
+  totalVisitors: number;
+  addedToCart: number;
+  completedPurchase: number;
+  abandonedCart: number;
 }
 
 // Utility function to generate past date strings
@@ -114,4 +138,61 @@ export const getDailyStats = async (): Promise<DailyStats[]> => {
       resolve(dailyStats);
     }, 500);
   });
+};
+
+// Adding the missing functions that are imported in AnalyticsPage.tsx
+
+// Get email engagement data for pie chart
+export const getEmailEngagementData = async (): Promise<ChartDataItem[]> => {
+  const emailStats = await getEmailStats();
+  return [
+    { name: 'Opened', value: emailStats.opened },
+    { name: 'Clicked', value: emailStats.clicked },
+    { name: 'Bounced', value: emailStats.bounced },
+    { name: 'Not Opened', value: emailStats.sent - emailStats.opened - emailStats.bounced }
+  ];
+};
+
+// Get conversion stats
+export const getConversionStats = async (): Promise<ConversionStats> => {
+  // Demo data for conversion stats
+  return {
+    totalVisitors: 2450,
+    addedToCart: 980,
+    completedPurchase: 645,
+    abandonedCart: 335
+  };
+};
+
+// Get conversion funnel data for bar chart
+export const getConversionFunnelData = async (): Promise<ChartDataItem[]> => {
+  const conversionStats = await getConversionStats();
+  return [
+    { name: 'Visited', value: conversionStats.totalVisitors },
+    { name: 'Added to Cart', value: conversionStats.addedToCart },
+    { name: 'Purchased', value: conversionStats.completedPurchase },
+    { name: 'Abandoned', value: conversionStats.abandonedCart }
+  ];
+};
+
+// Get email time series data
+export const getEmailTimeSeriesData = async (): Promise<TimeSeriesData[]> => {
+  // Generate time series data for the last 7 days
+  const timeSeriesData: TimeSeriesData[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const date = getDateString(i);
+    const sent = Math.floor(Math.random() * 200);
+    const opened = Math.floor(Math.random() * sent);
+    const clicked = Math.floor(Math.random() * opened);
+    const bounced = Math.floor(Math.random() * 20);
+    
+    timeSeriesData.push({
+      date,
+      sent,
+      opened,
+      clicked,
+      bounced
+    });
+  }
+  return timeSeriesData;
 };

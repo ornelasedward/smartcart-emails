@@ -1,11 +1,10 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, BarChartHorizontal, LineChart, PieChart } from "lucide-react";
-import { ChartContainer } from "@/components/ui/chart";
 import { 
   getEmailStats, 
   getConversionStats, 
@@ -13,7 +12,9 @@ import {
   getConversionFunnelData,
   getEmailTimeSeriesData,
   ChartDataItem,
-  TimeSeriesData
+  TimeSeriesData,
+  ConversionStats,
+  EmailStats
 } from "@/services/analyticsService";
 import {
   ResponsiveContainer,
@@ -34,31 +35,31 @@ import {
 const AnalyticsPage = () => {
   // Fetch data using React Query
   const { data: emailStats = { sent: 0, opened: 0, clicked: 0, bounced: 0 }, isLoading: isLoadingEmailStats } = 
-    useQuery({
+    useQuery<EmailStats>({
       queryKey: ['emailStats'],
       queryFn: getEmailStats
     });
 
   const { data: conversionStats = { totalVisitors: 0, addedToCart: 0, completedPurchase: 0, abandonedCart: 0 }, isLoading: isLoadingConversionStats } = 
-    useQuery({
+    useQuery<ConversionStats>({
       queryKey: ['conversionStats'],
       queryFn: getConversionStats
     });
 
   const { data: emailEngagementData = [], isLoading: isLoadingEmailEngagement } = 
-    useQuery({
+    useQuery<ChartDataItem[]>({
       queryKey: ['emailEngagementData'],
       queryFn: getEmailEngagementData
     });
 
   const { data: conversionFunnelData = [], isLoading: isLoadingConversionFunnel } = 
-    useQuery({
+    useQuery<ChartDataItem[]>({
       queryKey: ['conversionFunnelData'],
       queryFn: getConversionFunnelData
     });
 
   const { data: timeSeriesData = [], isLoading: isLoadingTimeSeriesData } = 
-    useQuery({
+    useQuery<TimeSeriesData[]>({
       queryKey: ['timeSeriesData'],
       queryFn: getEmailTimeSeriesData
     });
