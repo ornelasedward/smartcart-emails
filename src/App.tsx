@@ -12,8 +12,18 @@ import EmailTemplatesPage from "./pages/EmailTemplatesPage";
 import EmailListsPage from "./pages/EmailListsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -21,16 +31,39 @@ const App = () => (
       <Toaster />
       <Sonner position="top-right" />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/signin" element={<SignInPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/emails" element={<EmailTemplatesPage />} />
-          <Route path="/email-lists" element={<EmailListsPage />} />
-          <Route path="/analytics" element={<AnalyticsPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            
+            {/* Protected routes */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/emails" element={
+              <ProtectedRoute>
+                <EmailTemplatesPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/email-lists" element={
+              <ProtectedRoute>
+                <EmailListsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/analytics" element={
+              <ProtectedRoute>
+                <AnalyticsPage />
+              </ProtectedRoute>
+            } />
+            
+            {/* Not found */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

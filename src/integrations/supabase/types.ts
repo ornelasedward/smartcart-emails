@@ -9,7 +9,128 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      email_analytics: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          recipient: string
+          rule_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          recipient: string
+          rule_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          recipient?: string
+          rule_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_analytics_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "email_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_rules: {
+        Row: {
+          active: boolean
+          content: string
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          primary_color: string
+          subject: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          content: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          primary_color: string
+          subject: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          content?: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          primary_color?: string
+          subject?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      user_stripe_info: {
+        Row: {
+          api_key: string | null
+          connected: boolean
+          created_at: string
+          stripe_account_id: string | null
+          stripe_customer_id: string | null
+          user_id: string
+        }
+        Insert: {
+          api_key?: string | null
+          connected?: boolean
+          created_at?: string
+          stripe_account_id?: string | null
+          stripe_customer_id?: string | null
+          user_id: string
+        }
+        Update: {
+          api_key?: string | null
+          connected?: boolean
+          created_at?: string
+          stripe_account_id?: string | null
+          stripe_customer_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
