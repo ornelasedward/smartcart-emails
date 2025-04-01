@@ -1,9 +1,8 @@
-
 import React from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart, BarChartHorizontal, Line, PieChart } from "lucide-react";
+import { BarChart, BarChartHorizontal, LineChart, PieChart } from "lucide-react";
 
 const AnalyticsPage = () => {
   // Sample data for analytics
@@ -76,7 +75,7 @@ const AnalyticsPage = () => {
                 <CardTitle className="text-sm font-medium">
                   Click Rate
                 </CardTitle>
-                <Line className="h-4 w-4 text-muted-foreground" />
+                <LineChart className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
