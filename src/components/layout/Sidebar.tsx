@@ -13,12 +13,14 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Mail, BarChart, LayoutDashboard, Settings, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
 
 const Sidebar = () => {
   const location = useLocation();
   const { signOut } = useAuth();
+  const { state } = useSidebar();
   
   const handleLogout = async () => {
     await signOut();
@@ -26,7 +28,7 @@ const Sidebar = () => {
 
   return (
     <>
-      <UISidebar>
+      <UISidebar variant="sidebar" collapsible="icon">
         <SidebarHeader>
           <Link to="/dashboard" className="flex items-center space-x-2 px-2">
             <div className="h-8 w-8 rounded-full smartcart-gradient"></div>
@@ -34,7 +36,11 @@ const Sidebar = () => {
           </Link>
           <div className="flex justify-end pr-2">
             <SidebarTrigger>
-              <ChevronLeft className="h-4 w-4" />
+              {state === "expanded" ? (
+                <ChevronLeft className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
             </SidebarTrigger>
           </div>
         </SidebarHeader>
