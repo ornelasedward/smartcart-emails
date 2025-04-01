@@ -13,7 +13,7 @@ const SignInPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, signUp } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,9 +25,22 @@ const SignInPage = () => {
 
     try {
       setIsLoading(true);
-      await signIn(email, password);
-    } catch (error) {
+      // Try to sign in first
+      try {
+        await signIn(email, password);
+      } catch (error: any) {
+        // If error is about account not existing, try signing up
+        if (error.message?.includes("Invalid login credentials")) {
+          toast.info("Attempting to create account...");
+          await signUp(email, password);
+        } else {
+          // If it's another error, re-throw it
+          throw error;
+        }
+      }
+    } catch (error: any) {
       console.error("Login error:", error);
+      // Toast error is handled in auth context
     } finally {
       setIsLoading(false);
     }
@@ -44,7 +57,7 @@ const SignInPage = () => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Sign In</CardTitle>
           <CardDescription>
-            Sign in to access your SmartCart dashboard
+            Sign in to access your Vibe Sends dashboard
           </CardDescription>
         </CardHeader>
         <CardContent>

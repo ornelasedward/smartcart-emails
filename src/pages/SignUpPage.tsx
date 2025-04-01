@@ -13,7 +13,7 @@ const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { signUp } = useAuth();
+  const { signUp, signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,9 +25,22 @@ const SignUpPage = () => {
 
     try {
       setIsLoading(true);
-      await signUp(email, password);
+      // Try to sign up first
+      try {
+        await signUp(email, password);
+      } catch (error: any) {
+        // If error is about user already exists, try signing in instead
+        if (error.message?.includes("already registered")) {
+          toast.info("Account exists, signing you in...");
+          await signIn(email, password);
+        } else {
+          // If it's another error, re-throw it
+          throw error;
+        }
+      }
     } catch (error) {
       console.error("Signup error:", error);
+      // Toast error is handled in auth context
     } finally {
       setIsLoading(false);
     }
@@ -44,7 +57,7 @@ const SignUpPage = () => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Create an Account</CardTitle>
           <CardDescription>
-            Get started with SmartCart to automate your email workflows
+            Get started with Vibe Sends to automate your email workflows
           </CardDescription>
         </CardHeader>
         <CardContent>
