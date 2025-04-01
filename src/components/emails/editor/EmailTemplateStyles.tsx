@@ -27,55 +27,63 @@ const TemplateStyleCard: React.FC<TemplateStyleCardProps> = ({
     switch (style) {
       case "modern":
         return (
-          <div className="bg-white rounded-md overflow-hidden border shadow-sm">
+          <div className="bg-white rounded-md overflow-hidden border shadow-sm h-full">
             <div className="bg-blue-500 h-4" />
-            <div className="p-1">
-              <div className="w-full h-2 bg-gray-200 rounded mb-1"></div>
-              <div className="w-3/4 h-2 bg-gray-200 rounded mb-1"></div>
-              <div className="w-1/2 h-2 bg-gray-200 rounded"></div>
+            <div className="p-2">
+              <div className="w-full h-2 bg-gray-200 rounded mb-2"></div>
+              <div className="w-3/4 h-2 bg-gray-200 rounded mb-2"></div>
+              <div className="w-1/2 h-2 bg-gray-200 rounded mb-2"></div>
+              <div className="w-full h-1 bg-gray-100 rounded mb-2"></div>
+              <div className="w-3/4 h-1 bg-gray-100 rounded"></div>
             </div>
-            <div className="h-3 flex justify-center items-center">
+            <div className="h-4 flex justify-center items-center">
               <div className="w-1/3 h-2 bg-blue-200 rounded"></div>
             </div>
           </div>
         );
       case "minimal":
         return (
-          <div className="bg-white rounded-md overflow-hidden border shadow-sm">
-            <div className="border-t-2 border-purple-500 pt-1 p-1">
-              <div className="w-full h-2 bg-gray-200 rounded mb-1"></div>
-              <div className="w-2/3 h-2 bg-gray-200 rounded"></div>
+          <div className="bg-white rounded-md overflow-hidden border shadow-sm h-full">
+            <div className="border-t-2 border-purple-500 pt-1 p-2">
+              <div className="w-full h-2 bg-gray-200 rounded mb-2"></div>
+              <div className="w-2/3 h-2 bg-gray-200 rounded mb-2"></div>
+              <div className="w-full h-1 bg-gray-100 rounded mb-1"></div>
+              <div className="w-2/3 h-1 bg-gray-100 rounded"></div>
             </div>
-            <div className="border-t border-gray-100 h-3 flex items-center p-1">
+            <div className="border-t border-gray-100 h-4 flex items-center p-1">
               <div className="w-1/4 h-1 bg-gray-200 rounded"></div>
             </div>
           </div>
         );
       case "classic":
         return (
-          <div className="bg-white rounded-md overflow-hidden border shadow-sm">
-            <div className="border-b border-gray-200 h-3 flex justify-center items-center">
+          <div className="bg-white rounded-md overflow-hidden border shadow-sm h-full">
+            <div className="border-b border-gray-200 h-4 flex justify-center items-center">
               <div className="w-1/4 h-1 bg-gray-300 rounded"></div>
             </div>
-            <div className="p-1 text-center">
-              <div className="w-3/4 h-2 bg-gray-200 rounded mx-auto mb-1"></div>
-              <div className="w-full h-2 bg-gray-200 rounded mb-1"></div>
-              <div className="w-2/3 h-2 bg-gray-200 rounded mx-auto"></div>
+            <div className="p-2 text-center">
+              <div className="w-3/4 h-2 bg-gray-200 rounded mx-auto mb-2"></div>
+              <div className="w-full h-2 bg-gray-200 rounded mb-2"></div>
+              <div className="w-2/3 h-2 bg-gray-200 rounded mx-auto mb-2"></div>
+              <div className="w-full h-1 bg-gray-100 rounded mb-1"></div>
+              <div className="w-2/3 h-1 bg-gray-100 rounded mx-auto"></div>
             </div>
             <div className="border-t border-gray-200 h-2"></div>
           </div>
         );
       case "promotional":
         return (
-          <div className="bg-white rounded-md overflow-hidden border shadow-sm">
-            <div className="bg-gradient-to-r from-pink-500 to-orange-400 h-5 flex justify-center items-center">
+          <div className="bg-white rounded-md overflow-hidden border shadow-sm h-full">
+            <div className="bg-gradient-to-r from-pink-500 to-orange-400 h-6 flex justify-center items-center">
               <div className="w-2/3 h-1 bg-white/60 rounded"></div>
             </div>
-            <div className="p-1">
-              <div className="w-full h-2 bg-gray-200 rounded mb-1"></div>
-              <div className="w-3/4 h-2 bg-gray-200 rounded"></div>
+            <div className="p-2">
+              <div className="w-full h-2 bg-gray-200 rounded mb-2"></div>
+              <div className="w-3/4 h-2 bg-gray-200 rounded mb-2"></div>
+              <div className="w-full h-1 bg-gray-100 rounded mb-1"></div>
+              <div className="w-2/3 h-1 bg-gray-100 rounded"></div>
             </div>
-            <div className="h-3 flex justify-center items-center">
+            <div className="h-4 flex justify-center items-center">
               <div className="w-1/3 h-2 rounded bg-gradient-to-r from-pink-500 to-orange-400"></div>
             </div>
           </div>
@@ -87,13 +95,13 @@ const TemplateStyleCard: React.FC<TemplateStyleCardProps> = ({
 
   return (
     <Card
-      className={`cursor-pointer transition-all hover:border-primary ${
+      className={`cursor-pointer transition-all hover:border-primary h-full ${
         selected ? "border-2 border-primary bg-primary/5" : ""
       }`}
       onClick={() => onSelect(style)}
     >
       <CardContent className="p-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 mb-3">
           <div className="text-muted-foreground">{icon}</div>
           <div className="flex-1">
             <h3 className="font-medium">{name}</h3>
@@ -103,7 +111,7 @@ const TemplateStyleCard: React.FC<TemplateStyleCardProps> = ({
         </div>
         
         {/* Preview thumbnail */}
-        <div className="mt-3 h-16">
+        <div className="h-24">
           {renderPreviewThumbnail()}
         </div>
       </CardContent>
@@ -155,7 +163,7 @@ const EmailTemplateStyles: React.FC<EmailTemplateStylesProps> = ({
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-medium">Template Style</h3>
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         {templateStyles.map((template) => (
           <TemplateStyleCard
             key={template.style}
