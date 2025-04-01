@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +32,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (event === 'SIGNED_OUT') {
           navigate('/signin');
+        } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          navigate('/dashboard');
         }
       }
     );
@@ -47,14 +50,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { error, data } = await supabase.auth.signUp({
         email,
         password
       });
 
       if (error) throw error;
-      toast.success('Sign up successful! Please check your email for verification.');
-      navigate('/signin');
+      
+      // If we have a session after signup, user is automatically signed in
+      if (data.session) {
+        toast.success('Account created and signed in!');
+        navigate('/dashboard');
+      } else {
+        toast.success('Sign up successful! Please check your email for verification.');
+      }
     } catch (error: any) {
       toast.error(error.message || 'An error occurred during sign up');
       throw error;
