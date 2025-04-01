@@ -1,15 +1,17 @@
 
 import React, { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ArrowRight, PlusCircle, CheckCircle, Trash2, Edit, ToggleLeft, ToggleRight } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import CreateRuleModal from "@/components/emails/CreateRuleModal";
 import EmailEditor from "@/components/emails/EmailEditor";
 import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
 import CreditsDisplay from "@/components/emails/CreditsDisplay";
 import PurchaseCreditsModal from "@/components/emails/PurchaseCreditsModal";
+import EmailRuleList from "@/components/dashboard/EmailRuleList";
+import EmptyRuleState from "@/components/dashboard/EmptyRuleState";
+import StatusBanner from "@/components/dashboard/StatusBanner";
 
 type EmailRuleType = "confirmation" | "abandoned-cart" | "cancellation" | "refund";
 
@@ -121,15 +123,6 @@ const DashboardPage = () => {
     }
   };
 
-  const getRuleIcon = (type: EmailRuleType) => {
-    switch (type) {
-      case "confirmation": return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case "abandoned-cart": return <ArrowRight className="h-5 w-5 text-blue-500" />;
-      case "cancellation": return <Trash2 className="h-5 w-5 text-red-500" />;
-      case "refund": return <ArrowRight className="h-5 w-5 text-yellow-500" />;
-    }
-  };
-
   return (
     <DashboardLayout>
       <OnboardingSteps 
@@ -146,10 +139,7 @@ const DashboardPage = () => {
 
       {connected && (
         <div className="mt-8 space-y-6">
-          <div className="flex items-center gap-2 mb-6 bg-green-50 text-green-700 px-4 py-3 rounded-md">
-            <CheckCircle className="h-5 w-5" />
-            <span>Stripe account successfully connected!</span>
-          </div>
+          <StatusBanner />
           
           <CreditsDisplay 
             usedCredits={usedCredits}
@@ -165,53 +155,14 @@ const DashboardPage = () => {
           </div>
 
           {emailRules.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 flex flex-col items-center justify-center text-center">
-                <div className="rounded-full bg-primary/10 p-4 mb-4">
-                  <PlusCircle className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-medium mb-2">No Email Rules Yet</h3>
-                <p className="text-muted-foreground mb-6 max-w-md">
-                  Create your first email rule to start automating emails for purchase confirmations, abandoned carts, and more.
-                </p>
-                <Button onClick={handleCreateRule}>
-                  <PlusCircle className="mr-2 h-4 w-4" /> Create Your First Rule
-                </Button>
-              </CardContent>
-            </Card>
+            <EmptyRuleState onCreateRule={handleCreateRule} />
           ) : (
-            <div className="grid gap-4">
-              {emailRules.map(rule => (
-                <Card key={rule.id} className={rule.active ? "" : "opacity-70"}>
-                  <CardContent className="p-6 flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                      <div className="rounded-full bg-primary/10 p-3">
-                        {getRuleIcon(rule.type)}
-                      </div>
-                      <div>
-                        <h3 className="font-medium">{rule.name}</h3>
-                        <p className="text-sm text-muted-foreground">{rule.subject}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="icon" onClick={() => handleToggleRule(rule.id)}>
-                        {rule.active ? (
-                          <ToggleRight className="h-5 w-5" />
-                        ) : (
-                          <ToggleLeft className="h-5 w-5" />
-                        )}
-                      </Button>
-                      <Button variant="outline" size="icon" onClick={() => handleEditRule(rule)}>
-                        <Edit className="h-5 w-5" />
-                      </Button>
-                      <Button variant="outline" size="icon" onClick={() => handleDeleteRule(rule.id)}>
-                        <Trash2 className="h-5 w-5" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <EmailRuleList 
+              emailRules={emailRules}
+              onToggleRule={handleToggleRule}
+              onEditRule={handleEditRule}
+              onDeleteRule={handleDeleteRule}
+            />
           )}
         </div>
       )}
