@@ -1,11 +1,13 @@
 
-import React from "react";
+import React, { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { PlusCircle } from "lucide-react";
+import EmailEditor, { EmailRuleType } from "@/components/emails/EmailEditor";
+import CreateRuleModal from "@/components/emails/CreateRuleModal";
 
 const EMAIL_TEMPLATES = [
   {
@@ -14,6 +16,7 @@ const EMAIL_TEMPLATES = [
     description: "Sent when a customer completes a purchase",
     subject: "Thank you for your purchase!",
     preview: "Your order has been confirmed and is being processed...",
+    type: "confirmation" as EmailRuleType,
   },
   {
     id: 2,
@@ -21,6 +24,7 @@ const EMAIL_TEMPLATES = [
     description: "Sent when a customer abandons their cart",
     subject: "You forgot something in your cart!",
     preview: "We noticed you left some items in your cart. Use code COMEBACK for 10% off...",
+    type: "abandoned-cart" as EmailRuleType,
   },
   {
     id: 3,
@@ -28,6 +32,7 @@ const EMAIL_TEMPLATES = [
     description: "Sent when a customer cancels their subscription",
     subject: "We're sorry to see you go",
     preview: "We're sad to see you go. Here's what you'll be missing...",
+    type: "cancellation" as EmailRuleType,
   },
   {
     id: 4,
@@ -35,16 +40,14 @@ const EMAIL_TEMPLATES = [
     description: "Sent when a refund is processed",
     subject: "Your refund has been processed",
     preview: "We've processed your refund. Here are the details...",
+    type: "refund" as EmailRuleType,
   },
 ];
 
 const EmailTemplateCard: React.FC<{
   template: typeof EMAIL_TEMPLATES[0];
-}> = ({ template }) => {
-  const handleEdit = () => {
-    toast.info(`Editing template: ${template.name}`);
-  };
-
+  onEdit: (template: typeof EMAIL_TEMPLATES[0]) => void;
+}> = ({ template, onEdit }) => {
   return (
     <Card>
       <CardHeader>
@@ -64,15 +67,34 @@ const EmailTemplateCard: React.FC<{
         </div>
       </CardContent>
       <CardFooter>
-        <Button onClick={handleEdit} variant="outline" className="w-full">Edit Template</Button>
+        <Button onClick={() => onEdit(template)} variant="outline" className="w-full">Edit Template</Button>
       </CardFooter>
     </Card>
   );
 };
 
 const EmailTemplatesPage = () => {
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [selectedTemplateType, setSelectedTemplateType] = useState<EmailRuleType | null>(null);
+
   const handleCreateTemplate = () => {
-    toast.info("Creating new email template");
+    setCreateModalOpen(true);
+  };
+
+  const handleEditTemplate = (template: typeof EMAIL_TEMPLATES[0]) => {
+    setSelectedTemplateType(template.type);
+    setEditorOpen(true);
+  };
+
+  const handleCreateTemplateType = (templateType: EmailRuleType) => {
+    setSelectedTemplateType(templateType);
+    setEditorOpen(true);
+  };
+
+  const handleSaveTemplate = (templateData: any) => {
+    console.log("Saving template data:", templateData);
+    toast.success(`${templateData.type} email template saved successfully`);
   };
 
   return (
@@ -100,20 +122,20 @@ const EmailTemplatesPage = () => {
         <TabsContent value="all" className="mt-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {EMAIL_TEMPLATES.map((template) => (
-              <EmailTemplateCard key={template.id} template={template} />
+              <EmailTemplateCard key={template.id} template={template} onEdit={handleEditTemplate} />
             ))}
           </div>
         </TabsContent>
         <TabsContent value="transaction" className="mt-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {EMAIL_TEMPLATES.slice(0, 2).map((template) => (
-              <EmailTemplateCard key={template.id} template={template} />
+              <EmailTemplateCard key={template.id} template={template} onEdit={handleEditTemplate} />
             ))}
           </div>
         </TabsContent>
         <TabsContent value="marketing" className="mt-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <EmailTemplateCard template={EMAIL_TEMPLATES[1]} />
+            <EmailTemplateCard template={EMAIL_TEMPLATES[1]} onEdit={handleEditTemplate} />
           </div>
         </TabsContent>
         <TabsContent value="custom" className="mt-6">
@@ -126,6 +148,20 @@ const EmailTemplatesPage = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Email Template Creation and Editor Modals */}
+      <CreateRuleModal
+        open={createModalOpen} 
+        onOpenChange={setCreateModalOpen}
+        onCreateTemplate={handleCreateTemplateType}
+      />
+
+      <EmailEditor
+        open={editorOpen}
+        onOpenChange={setEditorOpen}
+        templateType={selectedTemplateType}
+        onSaveTemplate={handleSaveTemplate}
+      />
     </DashboardLayout>
   );
 };
