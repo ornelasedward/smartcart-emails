@@ -40,7 +40,7 @@ const Sidebar = () => {
         <div className="p-4 border-b">
           <Link to="/dashboard" className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-full smartcart-gradient"></div>
-            <h1 className="text-xl font-bold">SmartCart</h1>
+            <h1 className="text-xl font-bold">Vibe Sends</h1>
           </Link>
         </div>
         

@@ -30,11 +30,11 @@ export const renderPromotionalTemplate = (props: EmailTemplateProps, processedCo
           </div>
         ` : ''}
         
-        <p style="line-height: 1.7; font-size: 16px; margin-top: 25px;">Cheers,<br>The ACME Team</p>
+        <p style="line-height: 1.7; font-size: 16px; margin-top: 25px;">Cheers,<br>The Vibe Sends Team</p>
       </div>
       
       <div style="padding: 20px; text-align: center; font-size: 12px; color: #777; background-color: #f8f8f8;">
-        <p>© ${new Date().getFullYear()} ACME Store. All rights reserved.</p>
+        <p>© ${new Date().getFullYear()} Vibe Sends. All rights reserved.</p>
         <p>This email was sent to john.doe@example.com</p>
       </div>
     </div>

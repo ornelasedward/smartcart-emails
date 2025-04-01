@@ -64,9 +64,9 @@ const OnboardingSteps = ({ open, onCompleteOnboarding }: OnboardingStepsProps) =
     
     if (!domain && !senderName) return "";
     if (!domain) return senderName;
-    if (!senderName) return `${domain}@SmartCart.com`;
+    if (!senderName) return `${domain}@vibesends.com`;
     
-    return `${senderName} <${domain}@SmartCart.com>`;
+    return `${senderName} <${domain}@vibesends.com>`;
   };
 
   const finishOnboarding = () => {
@@ -86,7 +86,7 @@ const OnboardingSteps = ({ open, onCompleteOnboarding }: OnboardingStepsProps) =
     switch (step) {
       case 1: return "Let's start by setting up your email sender identity";
       case 2: return "Connect your Stripe account to enable payments";
-      case 3: return "Your SmartCart is now ready to use";
+      case 3: return "Your Vibe Sends is now ready to use";
       default: return "";
     }
   };

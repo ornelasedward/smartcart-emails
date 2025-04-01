@@ -15,7 +15,7 @@ const CompletionStep: React.FC<CompletionStepProps> = ({ onFinishOnboarding }) =
       </div>
       <h3 className="text-xl font-semibold mb-2">Setup Complete!</h3>
       <p className="text-center text-muted-foreground mb-8">
-        You've successfully configured your SmartCart. You're ready to start creating email rules.
+        You've successfully configured your Vibe Sends. You're ready to start creating email rules.
       </p>
       <Button onClick={onFinishOnboarding} className="w-full">
         Get Started

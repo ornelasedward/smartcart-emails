@@ -48,7 +48,7 @@ const ConfigureSenderStep: React.FC<ConfigureSenderStepProps> = ({
                 <FormControl>
                   <div className="flex items-center space-x-2">
                     <Input placeholder="ornelasedward" {...field} />
-                    <span className="whitespace-nowrap text-sm text-muted-foreground">@SmartCart.com</span>
+                    <span className="whitespace-nowrap text-sm text-muted-foreground">@vibesends.com</span>
                   </div>
                 </FormControl>
                 <FormDescription>

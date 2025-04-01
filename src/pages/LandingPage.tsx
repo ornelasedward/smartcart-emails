@@ -19,7 +19,7 @@ const LandingPage = () => {
               <br />Made easy
             </h1>
             <p className="mt-6 text-xl text-gray-600 max-w-2xl mx-auto">
-              Automate your transactional emails with SmartCart. Connect your Stripe account and
+              Automate your transactional emails with Vibe Sends. Connect your Stripe account and
               send perfectly timed emails for purchases, abandoned carts, and more.
             </p>
             <div className="mt-12">
@@ -35,7 +35,7 @@ const LandingPage = () => {
         {/* Features Section */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">How SmartCart Works</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">How Vibe Sends Works</h2>
             
             <div className="grid md:grid-cols-3 gap-8">
               <div className="bg-white p-6 rounded-lg shadow-sm border">
@@ -76,7 +76,7 @@ const LandingPage = () => {
           <div className="container mx-auto text-center">
             <h2 className="text-3xl font-bold mb-6">Ready to automate your emails?</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
-              Join thousands of businesses using SmartCart to increase revenue and customer satisfaction.
+              Join thousands of businesses using Vibe Sends to increase revenue and customer satisfaction.
             </p>
             <Link to="/signup">
               <Button size="lg" className="px-8">
@@ -92,10 +92,10 @@ const LandingPage = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-6 md:mb-0">
               <div className="h-8 w-8 rounded-full smartcart-gradient mr-2"></div>
-              <span className="text-lg font-semibold">SmartCart</span>
+              <span className="text-lg font-semibold">Vibe Sends</span>
             </div>
             <div className="text-sm text-gray-600">
-              © {new Date().getFullYear()} SmartCart. All rights reserved.
+              © {new Date().getFullYear()} Vibe Sends. All rights reserved.
             </div>
           </div>
         </div>

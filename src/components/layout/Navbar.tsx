@@ -9,7 +9,7 @@ const Navbar = () => {
       <div className="container flex items-center justify-between py-4">
         <Link to="/" className="flex items-center space-x-2">
           <div className="h-8 w-8 rounded-full smartcart-gradient"></div>
-          <h1 className="text-xl font-bold">SmartCart</h1>
+          <h1 className="text-xl font-bold">Vibe Sends</h1>
         </Link>
         <div className="flex items-center space-x-4">
           <Link to="/signin">

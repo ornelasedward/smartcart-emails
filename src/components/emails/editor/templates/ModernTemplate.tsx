@@ -23,11 +23,11 @@ export const renderModernTemplate = (props: EmailTemplateProps, processedContent
           </div>
         ` : ''}
         
-        <p style="line-height: 1.6; font-size: 16px;">Best regards,<br>ACME Store Team</p>
+        <p style="line-height: 1.6; font-size: 16px;">Best regards,<br>Vibe Sends Team</p>
       </div>
       
       <div style="padding: 20px; text-align: center; font-size: 12px; color: #777;">
-        <p>© ${new Date().getFullYear()} ACME Store. All rights reserved.</p>
+        <p>© ${new Date().getFullYear()} Vibe Sends. All rights reserved.</p>
         <p>This email was sent to john.doe@example.com</p>
       </div>
     </div>

@@ -29,12 +29,12 @@ export const renderClassicTemplate = (props: EmailTemplateProps, processedConten
               </div>
             ` : ''}
             
-            <p style="line-height: 1.6; font-size: 16px; margin-top: 15px;">Sincerely,<br>ACME Store</p>
+            <p style="line-height: 1.6; font-size: 16px; margin-top: 15px;">Sincerely,<br>Vibe Sends</p>
           </td>
         </tr>
         <tr>
           <td style="padding: 20px; text-align: center; font-size: 12px; color: #777; border-top: 1px solid #ddd;">
-            <p>© ${new Date().getFullYear()} ACME Store. All rights reserved.</p>
+            <p>© ${new Date().getFullYear()} Vibe Sends. All rights reserved.</p>
             <p>This email was sent to john.doe@example.com</p>
           </td>
         </tr>
