@@ -85,7 +85,7 @@ const PreviewTab: React.FC<PreviewTabProps> = ({
   const renderMinimalTemplate = (processedContent: string) => {
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: ${backgroundColor}; color: #333; padding: 20px;">
-        ${logoUrl ? `<div style="padding: 10px 0;"><img src="${logoUrl}" alt="Company Logo" style="max-height: 40px; max-width: 150px;" /></div>` : ''}
+        ${logoUrl ? `<div style="text-align: center; padding: 10px 0;"><img src="${logoUrl}" alt="Company Logo" style="max-height: 40px; max-width: 150px;" /></div>` : ''}
         
         <div style="border-top: 3px solid ${primaryColor}; padding-top: 20px; margin-top: 10px;">
           <h1 style="margin: 0; font-size: 24px; color: ${primaryColor};">${heroTitle}</h1>
