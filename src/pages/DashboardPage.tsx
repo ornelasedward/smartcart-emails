@@ -8,6 +8,8 @@ import { ArrowRight, PlusCircle, CheckCircle, Trash2, Edit, ToggleLeft, ToggleRi
 import CreateRuleModal from "@/components/emails/CreateRuleModal";
 import EmailEditor from "@/components/emails/EmailEditor";
 import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+import CreditsDisplay from "@/components/emails/CreditsDisplay";
+import PurchaseCreditsModal from "@/components/emails/PurchaseCreditsModal";
 
 type EmailRuleType = "confirmation" | "abandoned-cart" | "cancellation" | "refund";
 
@@ -32,6 +34,11 @@ const DashboardPage = () => {
   const [currentTemplateType, setCurrentTemplateType] = useState<EmailRuleType | null>(null);
   const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
   const [emailRules, setEmailRules] = useState<EmailRule[]>([]);
+  const [purchaseCreditsModalOpen, setPurchaseCreditsModalOpen] = useState(false);
+  
+  // Mock credit data - in a real app, you would fetch this from your backend
+  const [usedCredits, setUsedCredits] = useState(500);
+  const [totalCredits, setTotalCredits] = useState(2000);
 
   const handleCompleteOnboarding = () => {
     setConnected(true);
@@ -138,11 +145,17 @@ const DashboardPage = () => {
       </div>
 
       {connected && (
-        <div className="mt-8">
+        <div className="mt-8 space-y-6">
           <div className="flex items-center gap-2 mb-6 bg-green-50 text-green-700 px-4 py-3 rounded-md">
             <CheckCircle className="h-5 w-5" />
             <span>Stripe account successfully connected!</span>
           </div>
+          
+          <CreditsDisplay 
+            usedCredits={usedCredits}
+            totalCredits={totalCredits}
+            onPurchaseClick={() => setPurchaseCreditsModalOpen(true)}
+          />
           
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">Email Rules</h2>
@@ -214,6 +227,11 @@ const DashboardPage = () => {
         onOpenChange={setEmailEditorOpen}
         templateType={currentTemplateType}
         onSaveTemplate={handleSaveTemplate}
+      />
+
+      <PurchaseCreditsModal
+        open={purchaseCreditsModalOpen}
+        onOpenChange={setPurchaseCreditsModalOpen}
       />
     </DashboardLayout>
   );
