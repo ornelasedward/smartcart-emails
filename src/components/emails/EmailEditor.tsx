@@ -8,6 +8,7 @@ import ContentTab from "./editor/ContentTab";
 import DesignTab from "./editor/DesignTab";
 import PreviewTab from "./editor/PreviewTab";
 import { getDefaultSubject, getDefaultContent, getDefaultHeroTitle, getDefaultSubtitle, getTemplateTitle } from "./editor/EmailEditorUtils";
+import EmailTemplateStyles, { EmailTemplateStyle } from "./editor/EmailTemplateStyles";
 
 export type EmailRuleType = "confirmation" | "abandoned-cart" | "cancellation" | "refund";
 
@@ -31,11 +32,12 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [activeColorType, setActiveColorType] = useState<"primary" | "background">("primary");
-  const [activeTab, setActiveTab] = useState("content");
+  const [activeTab, setActiveTab] = useState("style");
   const [heroTitle, setHeroTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [showCta, setShowCta] = useState(false);
   const [ctaText, setCtaText] = useState("Shop Now");
+  const [templateStyle, setTemplateStyle] = useState<EmailTemplateStyle>("modern");
   
   React.useEffect(() => {
     if (open && templateType) {
@@ -65,6 +67,7 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
       subtitle,
       showCta,
       ctaText,
+      templateStyle,
       createdAt: new Date().toISOString(),
     });
     
@@ -82,12 +85,22 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
           </DialogDescription>
         </DialogHeader>
         
-        <Tabs defaultValue="content" className="w-full" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="style" className="w-full" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="style">Style</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="design">Design</TabsTrigger>
             <TabsTrigger value="preview">Preview</TabsTrigger>
           </TabsList>
+          
+          <TabsContent value="style">
+            <div className="py-4">
+              <EmailTemplateStyles
+                selectedStyle={templateStyle}
+                onSelectStyle={setTemplateStyle}
+              />
+            </div>
+          </TabsContent>
           
           <TabsContent value="content">
             <ContentTab
@@ -131,6 +144,7 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
               subtitle={subtitle}
               showCta={showCta}
               ctaText={ctaText}
+              templateStyle={templateStyle}
             />
           </TabsContent>
         </Tabs>

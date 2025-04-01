@@ -5,9 +5,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, LayoutGrid, LayoutList, FileText, FileImage } from "lucide-react";
 import EmailEditor, { EmailRuleType } from "@/components/emails/EmailEditor";
 import CreateRuleModal from "@/components/emails/CreateRuleModal";
+import { EmailTemplateStyle } from "@/components/emails/editor/EmailTemplateStyles";
 
 const EMAIL_TEMPLATES = [
   {
@@ -17,6 +18,7 @@ const EMAIL_TEMPLATES = [
     subject: "Thank you for your purchase!",
     preview: "Your order has been confirmed and is being processed...",
     type: "confirmation" as EmailRuleType,
+    style: "modern" as EmailTemplateStyle,
   },
   {
     id: 2,
@@ -25,6 +27,7 @@ const EMAIL_TEMPLATES = [
     subject: "You forgot something in your cart!",
     preview: "We noticed you left some items in your cart. Use code COMEBACK for 10% off...",
     type: "abandoned-cart" as EmailRuleType,
+    style: "promotional" as EmailTemplateStyle,
   },
   {
     id: 3,
@@ -33,6 +36,7 @@ const EMAIL_TEMPLATES = [
     subject: "We're sorry to see you go",
     preview: "We're sad to see you go. Here's what you'll be missing...",
     type: "cancellation" as EmailRuleType,
+    style: "classic" as EmailTemplateStyle,
   },
   {
     id: 4,
@@ -41,8 +45,34 @@ const EMAIL_TEMPLATES = [
     subject: "Your refund has been processed",
     preview: "We've processed your refund. Here are the details...",
     type: "refund" as EmailRuleType,
+    style: "minimal" as EmailTemplateStyle,
   },
 ];
+
+const getTemplateStyleIcon = (style: EmailTemplateStyle) => {
+  switch (style) {
+    case "modern":
+      return <LayoutGrid className="h-4 w-4" />;
+    case "minimal":
+      return <FileText className="h-4 w-4" />;
+    case "classic":
+      return <LayoutList className="h-4 w-4" />;
+    case "promotional":
+      return <FileImage className="h-4 w-4" />;
+    default:
+      return <LayoutGrid className="h-4 w-4" />;
+  }
+};
+
+const getTemplateStyleName = (style: EmailTemplateStyle) => {
+  switch (style) {
+    case "modern": return "Modern";
+    case "minimal": return "Minimal";
+    case "classic": return "Classic";
+    case "promotional": return "Promotional";
+    default: return "Modern";
+  }
+};
 
 const EmailTemplateCard: React.FC<{
   template: typeof EMAIL_TEMPLATES[0];
@@ -51,8 +81,16 @@ const EmailTemplateCard: React.FC<{
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{template.name}</CardTitle>
-        <CardDescription>{template.description}</CardDescription>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle>{template.name}</CardTitle>
+            <CardDescription>{template.description}</CardDescription>
+          </div>
+          <div className="flex items-center text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
+            {getTemplateStyleIcon(template.style)}
+            <span className="ml-1">{getTemplateStyleName(template.style)}</span>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
