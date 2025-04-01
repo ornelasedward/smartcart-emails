@@ -12,7 +12,6 @@ import { Loader2 } from "lucide-react";
 const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { signUp } = useAuth();
 
@@ -26,7 +25,7 @@ const SignUpPage = () => {
 
     try {
       setIsLoading(true);
-      await signUp(email, password, fullName);
+      await signUp(email, password);
     } catch (error) {
       console.error("Signup error:", error);
     } finally {
@@ -50,15 +49,6 @@ const SignUpPage = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input 
-                id="fullName"
-                placeholder="John Doe" 
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-              />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input 
