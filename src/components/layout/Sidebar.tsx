@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Mail, BarChart, LayoutDashboard, Settings, LogOut } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 type SidebarItemProps = {
   path: string;
@@ -34,6 +35,12 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ path, label, icon }) => {
 };
 
 const Sidebar = () => {
+  const { signOut } = useAuth();
+  
+  const handleLogout = async () => {
+    await signOut();
+  };
+
   return (
     <aside className="h-screen border-r w-64 fixed top-0 left-0 bg-background">
       <div className="flex flex-col h-full">
@@ -55,7 +62,11 @@ const Sidebar = () => {
         </div>
         
         <div className="p-4 border-t mt-auto">
-          <Button variant="ghost" className="w-full justify-start text-muted-foreground">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start text-muted-foreground"
+            onClick={handleLogout}
+          >
             <LogOut size={18} className="mr-2" />
             Logout
           </Button>
