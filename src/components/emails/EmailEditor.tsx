@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { HexColorPicker } from "react-colorful";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, ImageIcon } from "lucide-react";
+import { Upload, ImageIcon, PlusCircle } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 type EmailRuleType = "confirmation" | "abandoned-cart" | "cancellation" | "refund";
 
@@ -29,9 +30,19 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
   const [content, setContent] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [primaryColor, setPrimaryColor] = useState("#4f46e5");
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [activeColorType, setActiveColorType] = useState<"primary" | "background">("primary");
   const [activeTab, setActiveTab] = useState("content");
+  const [heroTitle, setHeroTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
+  const [showCta, setShowCta] = useState(false);
+  const [ctaText, setCtaText] = useState("Shop Now");
+  const [productImageUrl, setProductImageUrl] = useState("");
+  const [productTitle, setProductTitle] = useState("");
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const productImageInputRef = useRef<HTMLInputElement>(null);
   
   const getDefaultSubject = () => {
     switch (templateType) {
@@ -51,13 +62,43 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
   const getDefaultContent = () => {
     switch (templateType) {
       case "confirmation":
-        return `Hi {customer_name},\n\nThank you for your purchase! Your order has been confirmed and is being processed.\n\nOrder ID: {order_id}\nOrder Total: {order_total}\n\nWe'll send you another email when your order ships.\n\nBest regards,\n{company_name}`;
+        return `Thank you for your order. We'll send you another email when your order ships.`;
       case "abandoned-cart":
-        return `Hi {customer_name},\n\nWe noticed you left some items in your cart.\n\nUse code COMEBACK for 10% off your purchase if you complete your order within the next 24 hours.\n\n{cart_items}\n\nBest regards,\n{company_name}`;
+        return `We noticed you left some items in your cart. Use code COMEBACK for 10% off your purchase if you complete your order within the next 24 hours.`;
       case "cancellation":
-        return `Hi {customer_name},\n\nWe're sorry to see you go. Your subscription has been canceled as requested.\n\nIf you have any feedback on how we could improve our service, please let us know.\n\nBest regards,\n{company_name}`;
+        return `We're sorry to see you go. Your subscription has been canceled as requested.`;
       case "refund":
-        return `Hi {customer_name},\n\nWe've processed your refund of {refund_amount}.\n\nIt may take 5-10 business days to appear on your statement.\n\nBest regards,\n{company_name}`;
+        return `We've processed your refund. It may take 5-10 business days to appear on your statement.`;
+      default:
+        return "";
+    }
+  };
+
+  const getDefaultHeroTitle = () => {
+    switch (templateType) {
+      case "confirmation":
+        return "ORDER CONFIRMED";
+      case "abandoned-cart":
+        return "YOU'RE IN LUCK!";
+      case "cancellation":
+        return "SUBSCRIPTION CANCELLED";
+      case "refund":
+        return "REFUND PROCESSED";
+      default:
+        return "";
+    }
+  };
+
+  const getDefaultSubtitle = () => {
+    switch (templateType) {
+      case "confirmation":
+        return "Your order has been confirmed and is being processed";
+      case "abandoned-cart":
+        return "That item you loved is still waiting for you";
+      case "cancellation":
+        return "We hope to see you again soon";
+      case "refund":
+        return "Your money is on its way back to you";
       default:
         return "";
     }
@@ -67,11 +108,16 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
     if (open && templateType) {
       setSubject(getDefaultSubject());
       setContent(getDefaultContent());
+      setHeroTitle(getDefaultHeroTitle());
+      setSubtitle(getDefaultSubtitle());
+      setShowCta(templateType === "abandoned-cart");
+      setCtaText(templateType === "abandoned-cart" ? "Complete Your Order" : "Shop Now");
+      setProductTitle(templateType === "abandoned-cart" ? "Your Cart Item" : "Featured Product");
     }
   }, [open, templateType]);
 
   const handleSave = () => {
-    if (!subject || !content) {
+    if (!subject || !heroTitle) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -82,6 +128,13 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
       content,
       logoUrl,
       primaryColor,
+      backgroundColor,
+      heroTitle,
+      subtitle,
+      showCta,
+      ctaText,
+      productImageUrl,
+      productTitle,
       createdAt: new Date().toISOString(),
     });
     
@@ -115,9 +168,24 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
     }
   };
 
+  const handleProductImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const localUrl = URL.createObjectURL(file);
+      setProductImageUrl(localUrl);
+      toast.success("Product image uploaded successfully");
+    }
+  };
+
   const triggerFileInput = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
+    }
+  };
+
+  const triggerProductImageInput = () => {
+    if (productImageInputRef.current) {
+      productImageInputRef.current.click();
     }
   };
 
@@ -125,13 +193,19 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
     e.preventDefault();
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, type: 'logo' | 'product') => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
       const localUrl = URL.createObjectURL(file);
-      setLogoUrl(localUrl);
-      toast.success("Logo uploaded successfully");
+      
+      if (type === 'logo') {
+        setLogoUrl(localUrl);
+        toast.success("Logo uploaded successfully");
+      } else {
+        setProductImageUrl(localUrl);
+        toast.success("Product image uploaded successfully");
+      }
     } else {
       toast.error("Please upload an image file");
     }
@@ -147,27 +221,44 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
       .replace(/{refund_amount}/g, "$99.99")
       .replace(/{company_name}/g, "ACME Store");
     
-    // Convert new lines to <br> tags
-    processedContent = processedContent.split('\n').map(line => line.trim()).join('<br />');
-    
     const emailHtml = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        ${logoUrl ? `<div style="text-align: center; margin-bottom: 20px;"><img src="${logoUrl}" alt="Company Logo" style="max-height: 80px; max-width: 200px;" /></div>` : ''}
-        <div style="background-color: #f8f8f8; padding: 20px; border-radius: 5px;">
-          <h2 style="color: ${primaryColor};">${subject}</h2>
-          <div style="color: #333; line-height: 1.6;">
-            ${processedContent}
-          </div>
-          <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; color: #777; font-size: 12px;">
-            <p>© ${new Date().getFullYear()} Your Company Name. All rights reserved.</p>
-            <p>This email was sent to john.doe@example.com</p>
-          </div>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: ${backgroundColor}; color: #333;">
+        ${logoUrl ? `<div style="text-align: center; padding: 20px;"><img src="${logoUrl}" alt="Company Logo" style="max-height: 80px; max-width: 200px;" /></div>` : ''}
+        
+        <div style="background-color: ${primaryColor}; color: white; padding: 30px 20px; text-align: center;">
+          <h1 style="margin: 0; font-size: 28px; color: white;">${heroTitle}</h1>
+          ${subtitle ? `<p style="margin-top: 10px; font-size: 16px; color: white;">${subtitle}</p>` : ''}
+        </div>
+        
+        <div style="padding: 30px 20px; background-color: white;">
+          <p style="line-height: 1.6; font-size: 16px; margin-bottom: 20px;">Hello John,</p>
+          <p style="line-height: 1.6; font-size: 16px;">${processedContent}</p>
+          
+          ${productImageUrl ? `
+            <div style="text-align: center; margin: 30px 0; padding: 15px; background-color: #f8f8f8;">
+              <img src="${productImageUrl}" alt="Product" style="max-width: 200px; max-height: 200px;" />
+              <p style="font-weight: bold; margin-top: 10px;">${productTitle || "Product Name"}</p>
+            </div>
+          ` : ''}
+          
+          ${showCta ? `
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="#" style="background-color: #000000; color: white; padding: 12px 25px; text-decoration: none; font-weight: bold; display: inline-block;">${ctaText}</a>
+            </div>
+          ` : ''}
+          
+          <p style="line-height: 1.6; font-size: 16px;">Best regards,<br>ACME Store Team</p>
+        </div>
+        
+        <div style="padding: 20px; text-align: center; font-size: 12px; color: #777; border-top: 1px solid #eee; background-color: #f8f8f8;">
+          <p>© ${new Date().getFullYear()} ACME Store. All rights reserved.</p>
+          <p>This email was sent to john.doe@example.com</p>
         </div>
       </div>
     `;
     
     return (
-      <div className="border rounded-md p-4 mt-4 bg-white">
+      <div className="border rounded-md p-4 mt-4 overflow-auto max-h-[500px]">
         <div dangerouslySetInnerHTML={{ __html: emailHtml }} />
       </div>
     );
@@ -202,13 +293,33 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
             </div>
             
             <div className="space-y-2">
+              <Label htmlFor="heroTitle">Hero Title</Label>
+              <Input 
+                id="heroTitle" 
+                value={heroTitle} 
+                onChange={(e) => setHeroTitle(e.target.value)} 
+                placeholder="Enter hero title" 
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="subtitle">Subtitle</Label>
+              <Input 
+                id="subtitle" 
+                value={subtitle} 
+                onChange={(e) => setSubtitle(e.target.value)} 
+                placeholder="Enter subtitle" 
+              />
+            </div>
+            
+            <div className="space-y-2">
               <Label htmlFor="content">Email Content</Label>
               <Textarea 
                 id="content" 
                 value={content} 
                 onChange={(e) => setContent(e.target.value)} 
                 placeholder="Enter email content"
-                className="min-h-[300px]"
+                className="min-h-[150px]"
               />
               <div className="text-sm text-muted-foreground">
                 <p>Available placeholders:</p>
@@ -222,66 +333,175 @@ const EmailEditor: React.FC<EmailEditorProps> = ({
                 </ul>
               </div>
             </div>
-          </TabsContent>
-          
-          <TabsContent value="design" className="space-y-4 py-4">
+            
             <div className="space-y-2">
-              <Label>Company Logo</Label>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                accept="image/*" 
-                className="hidden" 
-                onChange={handleLogoUpload} 
-              />
-              <div 
-                className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
-                onClick={triggerFileInput}
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-              >
-                {logoUrl ? (
-                  <div className="flex flex-col items-center">
-                    <img src={logoUrl} alt="Logo preview" className="max-h-20 mb-2" />
-                    <Button variant="outline" size="sm" onClick={(e) => {
-                      e.stopPropagation();
-                      setLogoUrl("");
-                    }}>
-                      Remove Logo
-                    </Button>
-                  </div>
-                ) : (
-                  <>
-                    <div className="mb-2 p-2 rounded-full bg-muted">
-                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-1">Click to upload or drag and drop</p>
-                    <p className="text-xs text-muted-foreground">PNG, JPG or SVG (max 2MB)</p>
-                  </>
-                )}
+              <div className="flex items-center space-x-2 mb-2">
+                <Switch 
+                  id="show-cta" 
+                  checked={showCta} 
+                  onCheckedChange={setShowCta} 
+                />
+                <Label htmlFor="show-cta">Add Call-to-Action Button</Label>
               </div>
+              
+              {showCta && (
+                <div className="pl-6 space-y-2 border-l-2 border-gray-200">
+                  <Label htmlFor="ctaText">Button Text</Label>
+                  <Input 
+                    id="ctaText" 
+                    value={ctaText} 
+                    onChange={(e) => setCtaText(e.target.value)} 
+                    placeholder="Enter button text" 
+                  />
+                </div>
+              )}
             </div>
             
             <div className="space-y-2">
-              <Label>Primary Color</Label>
-              <div className="flex items-center gap-2">
-                <div 
-                  className="w-10 h-10 rounded-md border cursor-pointer"
-                  style={{ backgroundColor: primaryColor }}
-                  onClick={() => setShowColorPicker(!showColorPicker)}
-                />
-                <Input
-                  value={primaryColor}
-                  onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="w-32"
-                />
+              <Label htmlFor="productTitle">Product Title</Label>
+              <Input 
+                id="productTitle" 
+                value={productTitle} 
+                onChange={(e) => setProductTitle(e.target.value)} 
+                placeholder="Enter product title" 
+              />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="design" className="space-y-6 py-4">
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Colors</h3>
+              
+              <div className="space-y-2">
+                <Label>Primary Color (Hero Background)</Label>
+                <div className="flex items-center gap-2">
+                  <div 
+                    className="w-10 h-10 rounded-md border cursor-pointer"
+                    style={{ backgroundColor: primaryColor }}
+                    onClick={() => {
+                      setActiveColorType("primary");
+                      setShowColorPicker(!showColorPicker);
+                    }}
+                  />
+                  <Input
+                    value={primaryColor}
+                    onChange={(e) => setPrimaryColor(e.target.value)}
+                    className="w-32"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Background Color</Label>
+                <div className="flex items-center gap-2">
+                  <div 
+                    className="w-10 h-10 rounded-md border cursor-pointer"
+                    style={{ backgroundColor: backgroundColor }}
+                    onClick={() => {
+                      setActiveColorType("background");
+                      setShowColorPicker(!showColorPicker);
+                    }}
+                  />
+                  <Input
+                    value={backgroundColor}
+                    onChange={(e) => setBackgroundColor(e.target.value)}
+                    className="w-32"
+                  />
+                </div>
               </div>
               
               {showColorPicker && (
                 <div className="mt-2">
-                  <HexColorPicker color={primaryColor} onChange={setPrimaryColor} />
+                  <HexColorPicker 
+                    color={activeColorType === "primary" ? primaryColor : backgroundColor} 
+                    onChange={(color) => {
+                      if (activeColorType === "primary") {
+                        setPrimaryColor(color);
+                      } else {
+                        setBackgroundColor(color);
+                      }
+                    }} 
+                  />
                 </div>
               )}
+            </div>
+            
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Images</h3>
+              
+              <div className="space-y-2">
+                <Label>Company Logo</Label>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={handleLogoUpload} 
+                />
+                <div 
+                  className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
+                  onClick={triggerFileInput}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, 'logo')}
+                >
+                  {logoUrl ? (
+                    <div className="flex flex-col items-center">
+                      <img src={logoUrl} alt="Logo preview" className="max-h-20 mb-2" />
+                      <Button variant="outline" size="sm" onClick={(e) => {
+                        e.stopPropagation();
+                        setLogoUrl("");
+                      }}>
+                        Remove Logo
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-2 p-2 rounded-full bg-muted">
+                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-1">Click to upload or drag and drop</p>
+                      <p className="text-xs text-muted-foreground">PNG, JPG or SVG (max 2MB)</p>
+                    </>
+                  )}
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Product Image</Label>
+                <input 
+                  type="file" 
+                  ref={productImageInputRef} 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={handleProductImageUpload} 
+                />
+                <div 
+                  className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
+                  onClick={triggerProductImageInput}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, 'product')}
+                >
+                  {productImageUrl ? (
+                    <div className="flex flex-col items-center">
+                      <img src={productImageUrl} alt="Product image preview" className="max-h-40 mb-2" />
+                      <Button variant="outline" size="sm" onClick={(e) => {
+                        e.stopPropagation();
+                        setProductImageUrl("");
+                      }}>
+                        Remove Image
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-2 p-2 rounded-full bg-muted">
+                        <PlusCircle className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-1">Click to upload or drag and drop</p>
+                      <p className="text-xs text-muted-foreground">PNG, JPG or SVG (max 2MB)</p>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           </TabsContent>
 
