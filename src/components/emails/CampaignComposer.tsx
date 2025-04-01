@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ import { format } from "date-fns";
 interface CampaignComposerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  subscribers: { id: number; email: string; name: string }[];
+  subscribers: { id: number; email: string; name: string; date?: string; status?: string; };
 }
 
 const CampaignComposer: React.FC<CampaignComposerProps> = ({

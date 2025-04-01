@@ -10,3 +10,11 @@ export interface EmailTemplateProps {
   ctaText: string;
   templateStyle?: string;
 }
+
+export interface SubscriberType {
+  id: number;
+  email: string;
+  name: string;
+  date?: string;
+  status?: string;
+}
